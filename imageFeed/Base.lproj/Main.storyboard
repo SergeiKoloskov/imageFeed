@@ -69,6 +69,7 @@
                                             <outlet property="cellImage" destination="gsh-6E-l7v" id="ACO-Ie-zdU"/>
                                             <outlet property="dateLabel" destination="v5X-2i-6Ar" id="f8y-Wh-nv0"/>
                                             <outlet property="likeButton" destination="rRW-ua-5Gx" id="vgW-wt-diJ"/>
+                                            <segue destination="Zju-GB-Cpa" kind="show" id="xfy-bV-Hub"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -95,6 +96,36 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="214.50381679389312" y="-294.36619718309862"/>
+        </scene>
+        <!--Single Image View Controller-->
+        <scene sceneID="580-hI-ZMc">
+            <objects>
+                <viewController id="Zju-GB-Cpa" customClass="SingleImageViewController" customModule="imageFeed" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ffv-xW-wFb">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="WDT-Tq-W3G">
+                                <rect key="frame" x="0.0" y="103" width="393" height="666"/>
+                            </imageView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="vjl-Rw-Z1e"/>
+                        <color key="backgroundColor" red="0.1019607843" green="0.1058823529" blue="0.1333333333" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="vjl-Rw-Z1e" firstAttribute="bottom" secondItem="WDT-Tq-W3G" secondAttribute="bottom" id="lYO-BZ-iwj"/>
+                            <constraint firstItem="WDT-Tq-W3G" firstAttribute="leading" secondItem="vjl-Rw-Z1e" secondAttribute="leading" id="qir-tz-rWG"/>
+                            <constraint firstItem="vjl-Rw-Z1e" firstAttribute="trailing" secondItem="WDT-Tq-W3G" secondAttribute="trailing" id="sP6-XG-MYr"/>
+                            <constraint firstItem="WDT-Tq-W3G" firstAttribute="top" secondItem="vjl-Rw-Z1e" secondAttribute="top" id="sVX-gz-cCQ"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="Pah-uE-RQm"/>
+                    <connections>
+                        <outlet property="imageView" destination="WDT-Tq-W3G" id="C1B-uV-5wv"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="KOe-F0-K5P" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1218" y="-294"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="ZMv-Zv-7Cf">
