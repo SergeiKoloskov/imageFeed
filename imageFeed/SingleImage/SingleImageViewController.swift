@@ -70,4 +70,20 @@ extension SingleImageViewController: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return imageView
     }
+    
+    func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
+        imageCentred()
+    }
+    
+    private func imageCentred() {
+        if scrollView.bounds.size.width > scrollView.contentSize.width {
+            let insetSizeForWidth = (scrollView.bounds.size.width - scrollView.contentSize.width) / 2
+            scrollView.contentInset.left = insetSizeForWidth
+        }
+        if scrollView.bounds.size.height > scrollView.contentSize.height {
+            let insetSizeForHeight = (scrollView.bounds.size.height - scrollView.contentSize.height) / 2
+            scrollView.contentInset.top = insetSizeForHeight
+        }
+    }
+    
 }
