@@ -12,22 +12,19 @@ enum WebViewConstants {
     static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
 }
 
-protocol WebViewViewControllerDelegate: AnyObject {
-    func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String)
-    func webViewViewControllerDidCancel(_ vc: WebViewViewController)
-}
-
 final class WebViewViewController: UIViewController {
+    weak var delegate: WebViewViewControllerDelegate?
+    weak var delegateSplashVC: SplashViewController?
+    
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet weak var progressView: UIProgressView!
-    
-    weak var delegate: WebViewViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         webView.navigationDelegate = self
         
         loadAuthView()
+        updateProgress()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -42,12 +39,15 @@ final class WebViewViewController: UIViewController {
         updateProgress()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
+        updateProgress()
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        webView.removeObserver(
-            self,
-            forKeyPath: #keyPath(WKWebView.estimatedProgress),
-            context: nil)
+        webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), context: nil)
     }
     
     override func observeValue(
@@ -68,9 +68,7 @@ final class WebViewViewController: UIViewController {
     }
     
     @IBAction func didTapBackButton(_ sender: Any) {
-        //        delegate?.webViewViewControllerDidCancel(self)
         dismiss(animated: true, completion: nil)
-        print("Hi")
     }
     
     private func loadAuthView() {
@@ -96,11 +94,9 @@ final class WebViewViewController: UIViewController {
 }
 
 extension WebViewViewController: WKNavigationDelegate {
-    func webView(
-        _ webView: WKWebView,
-        decidePolicyFor navigationAction: WKNavigationAction,
-        decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
-    ) {
+    
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        
         if let code = code(from: navigationAction) {
             delegate?.webViewViewController(self, didAuthenticateWithCode: code)
             decisionHandler(.cancel)
