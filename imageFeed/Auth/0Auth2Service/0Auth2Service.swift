@@ -8,11 +8,18 @@
 import Foundation
 import WebKit
 
+enum AuthServiceError: Error {
+    case invalidRequest
+}
+
 final class OAuth2Service {
     static let shared = OAuth2Service()
     private init() {}
     private let tokenStorage = OAuth2TokenStorage.shared
     private let decoder = JSONDecoder()
+    
+    private var task: URLSessionTask?
+    private var lastCode: String?
     
     
     func makeOAuthTokenRequest(code: String) -> URLRequest? {
@@ -34,31 +41,52 @@ final class OAuth2Service {
     }
     
     func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
+        
+        assert(Thread.isMainThread)
+        if task != nil {
+            guard lastCode != code else {
+                completion(.failure(AuthServiceError.invalidRequest))
+                return
+            }
+            task?.cancel()
+        }
+        
+        lastCode = code
+        
         guard let request = makeOAuthTokenRequest(code: code) else {
             print("Fatal Error. Fetch authorization requset can not be created")
             fatalError("Fatal Error. Fetch authorization requset can not be created")
         }
         
-        URLSession.shared.data(for: request) {[weak self] result in
-            switch result {
-            case .success(let data):
-                do {
-//                    let decoder = JSONDecoder()
-                    guard let response = try self?.decoder.decode(OAuthTokenResponseBody.self, from: data)
-                    else { return }
-                    
-                    guard let self else { return }
-                    self.tokenStorage.token = response.accessToken
-                    
-                    completion(.success(response.accessToken))
-                } catch {
-                    print("Error occured while decoding the OAuth token response: \(error)")
+        let task = URLSession.shared.data(for: request) {[weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let data):
+                    do {
+                        //                    let decoder = JSONDecoder()
+                        guard let response = try self?.decoder.decode(OAuthTokenResponseBody.self, from: data)
+                        else { return }
+                        
+                        guard let self else { return }
+                        self.tokenStorage.token = response.accessToken
+                        
+                        completion(.success(response.accessToken))
+                    } catch {
+                        print("Error occured while decoding the OAuth token response: \(error)")
+                        completion(.failure(error))
+                    }
+                case .failure(let error):
+                    print("Error occured while fetching OAuth token: \(error)")
                     completion(.failure(error))
                 }
-            case .failure(let error):
-                print("Error occured while fetching OAuth token: \(error)")
-                completion(.failure(error))
+                
+                self?.task = nil
+                self?.lastCode = nil
+                
             }
-        }.resume()
+        }
+        
+        self.task = task
+        task.resume()
     }
 }

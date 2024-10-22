@@ -14,7 +14,6 @@ enum WebViewConstants {
 
 final class WebViewViewController: UIViewController {
     weak var delegate: WebViewViewControllerDelegate?
-    weak var delegateSplashVC: SplashViewController?
     
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet weak var progressView: UIProgressView!
