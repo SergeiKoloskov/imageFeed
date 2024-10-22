@@ -7,15 +7,11 @@
 
 import UIKit
 
-protocol AuthViewControllerDelegate: AnyObject {
-    func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String)
-}
-
 final class AuthViewController: UIViewController {
     private let showWebViewSegueIdentifier = "ShowWebView"
     private let service = OAuth2Service.shared
-    private var tokenStorage = OAuth2TokenStorage()
-    var delegate = SplashViewController()
+    private var tokenStorage = OAuth2TokenStorage.shared
+    weak var delegate: SplashViewControllerDelegate?
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == showWebViewSegueIdentifier {
@@ -53,7 +49,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
                 switch result {
                 case .success(let accessCode):
                     self.tokenStorage.token = accessCode
-                    self.delegate.didAuthenticate(self)
+                    self.delegate?.didAuthenticate(self)
                 case .failure(let error):
                     print("Authentication error", error)
                 }

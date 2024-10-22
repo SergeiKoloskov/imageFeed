@@ -7,11 +7,11 @@
 
 import UIKit
 
-final class SplashViewController: UIViewController {
+final class SplashViewController: UIViewController, SplashViewControllerDelegate {
     private let ShowAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
 
     private let authService = OAuth2Service.shared
-    private let tokenStorage = OAuth2TokenStorage()
+    private let tokenStorage = OAuth2TokenStorage.shared
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -59,8 +59,7 @@ extension SplashViewController: AuthViewControllerDelegate {
     
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
         dismiss(animated: true) { [weak self] in
-            guard let self = self else { return }
-            self.fetchOAuthToken(code)
+            self?.fetchOAuthToken(code)
         }
     }
 
