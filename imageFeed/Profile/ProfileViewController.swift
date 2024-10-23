@@ -4,9 +4,8 @@
 //
 //  Created by MacBookPro on 16.10.2024.
 //
-
-import Foundation
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
 
@@ -115,10 +114,11 @@ final class ProfileViewController: UIViewController {
             let profileImageURL = ProfileImageService.shared.avatarURL,
             let url = URL(string: profileImageURL)
         else { return }
-        // TODO [Sprint 11] Обновить аватар, используя Kingfisher
-    }
+        userImageView.kf.indicatorType = .activity
     
+        userImageView.kf.setImage(with: url, placeholder: UIImage(named: "userPic_placeholder.png"))
+        userImageView.layer.cornerRadius = userImageView.frame.size.width / 2
+        userImageView.clipsToBounds = true
+    }
 }
-
-
 

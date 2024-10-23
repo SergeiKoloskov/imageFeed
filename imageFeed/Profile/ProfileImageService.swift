@@ -47,7 +47,7 @@ final class ProfileImageService{
             DispatchQueue.main.async {
                 switch result {
                 case .success(let profileImageURL):
-                    let avatarURL = profileImageURL.profileImage.small
+                    let avatarURL = profileImageURL.profileImage.large
                     self.avatarURL = avatarURL
                     completion(.success(avatarURL))
                     NotificationCenter.default.post(
