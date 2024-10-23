@@ -109,7 +109,7 @@ final class ProfileViewController: UIViewController {
         descriptionLabel?.text = profile.bio
     }
     
-    private func updateAvatar() {                                   // 8
+    private func updateAvatar() {
         guard
             let profileImageURL = ProfileImageService.shared.avatarURL,
             let url = URL(string: profileImageURL)
