@@ -14,14 +14,25 @@ enum WebViewConstants {
 
 final class WebViewViewController: UIViewController {
     weak var delegate: WebViewViewControllerDelegate?
-    weak var delegateSplashVC: SplashViewController?
     
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet weak var progressView: UIProgressView!
     
+    private var estimatedProgressObservation: NSKeyValueObservation?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         webView.navigationDelegate = self
+        
+        estimatedProgressObservation = webView.observe(
+            \.estimatedProgress,
+             options: [],
+             changeHandler: { [weak self] _, _ in
+                 guard let self = self else { return }
+                 self.updateProgress()
+             })
+        
+        loadAuthView()
         
         loadAuthView()
         updateProgress()

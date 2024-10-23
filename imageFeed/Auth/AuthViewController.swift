@@ -43,8 +43,10 @@ final class AuthViewController: UIViewController {
 extension AuthViewController: WebViewViewControllerDelegate {
 
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
+        
         service.fetchOAuthToken(code) { [weak self] result in
             guard let self = self else {return}
+            
             DispatchQueue.main.async {
                 switch result {
                 case .success(let accessCode):
@@ -56,10 +58,6 @@ extension AuthViewController: WebViewViewControllerDelegate {
             }
         }
     }
-
-//    func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
-//        vc.dismiss(animated: true)
-//    }
 }
 
 
