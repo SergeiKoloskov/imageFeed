@@ -8,10 +8,6 @@
 import Foundation
 import WebKit
 
-enum AuthServiceError: Error {
-    case invalidRequest
-}
-
 final class OAuth2Service {
     static let shared = OAuth2Service()
     private init() {}
@@ -58,23 +54,14 @@ final class OAuth2Service {
             fatalError("Fatal Error. Fetch authorization requset can not be created")
         }
         
-        let task = URLSession.shared.data(for: request) {[weak self] result in
+        let task = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let data):
-                    do {
-                        //                    let decoder = JSONDecoder()
-                        guard let response = try self?.decoder.decode(OAuthTokenResponseBody.self, from: data)
-                        else { return }
-                        
-                        guard let self else { return }
-                        self.tokenStorage.token = response.accessToken
-                        
-                        completion(.success(response.accessToken))
-                    } catch {
-                        print("Error occured while decoding the OAuth token response: \(error)")
-                        completion(.failure(error))
-                    }
+                    
+                    guard let self else { return }
+                    self.tokenStorage.token = data.accessToken
+                    completion(.success(data.accessToken))
                 case .failure(let error):
                     print("Error occured while fetching OAuth token: \(error)")
                     completion(.failure(error))

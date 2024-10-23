@@ -54,15 +54,22 @@ extension AuthViewController: WebViewViewControllerDelegate {
                     self.tokenStorage.token = accessCode
                     self.delegate?.didAuthenticate(self)
                 case .failure(let error):
+                    self.showAlert()
                     print("Authentication error", error)
                 }
             }
         }
     }
-
-//    func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
-//        vc.dismiss(animated: true)
-//    }
+    
+    private  func showAlert() {
+        let alertController = UIAlertController(title: "Что-то пошло не так", message: "Не удалось войти в систему", preferredStyle: .alert)
+        let okButtin = UIAlertAction(title: "OK", style: .default) { _ in
+            alertController.dismiss(animated: true, completion: nil)
+        }
+        
+        alertController.addAction(okButtin)
+        present(alertController, animated: true, completion: nil)
+    }
 }
 
 

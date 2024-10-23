@@ -9,10 +9,30 @@ import Foundation
 import UIKit
 
 final class ProfileViewController: UIViewController {
+
+    private var nameLabel: UILabel?
+    private var loginLabel: UILabel?
+    private var descriptionLabel: UILabel?
+    private var userImageView = UIImageView()
+    
+    let profileService = ProfileService.shared
+    private var profileImageServiceObserver: NSObjectProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         viewSetUp()
+        guard let user = profileService.profile else { return }
+        updateProfileDetails(profile: user)
+        
+        profileImageServiceObserver = NotificationCenter.default.addObserver(
+            forName: ProfileImageService.didChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self = self else { return }
+            self.updateAvatar()
+        }
+        updateAvatar()
     }
     
     private func viewSetUp() {
@@ -25,6 +45,8 @@ final class ProfileViewController: UIViewController {
         imageView.widthAnchor.constraint(equalToConstant: 70).isActive = true
         imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
         imageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 75).isActive = true
+        
+        self.userImageView = imageView
         
         // Exit button setup
         let exitButton = UIButton.systemButton(with: UIImage(named: "logout_button") ?? UIImage(), target: self, action: #selector(didTapExitButton))
@@ -45,6 +67,8 @@ final class ProfileViewController: UIViewController {
         nameLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
         nameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8).isActive = true
         
+        self.nameLabel = nameLabel
+        
         // Login label setup
         let loginLabel = UILabel()
         loginLabel.text = "@ekaterina_nov"
@@ -54,6 +78,8 @@ final class ProfileViewController: UIViewController {
         loginLabel.translatesAutoresizingMaskIntoConstraints = false
         loginLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
         loginLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8).isActive = true
+        
+        self.loginLabel = loginLabel
         
         // Description setup
         let descriptionLabel = UILabel()
@@ -65,6 +91,7 @@ final class ProfileViewController: UIViewController {
         descriptionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
         descriptionLabel.topAnchor.constraint(equalTo: loginLabel.bottomAnchor, constant: 8).isActive = true
         
+        self.descriptionLabel = descriptionLabel
     }
     
     //Exit button action
@@ -75,6 +102,20 @@ final class ProfileViewController: UIViewController {
                 view.removeFromSuperview()
             }
         }
+    }
+    
+    private func updateProfileDetails(profile: Profile) {
+        nameLabel?.text = profile.name
+        loginLabel?.text = profile.loginName
+        descriptionLabel?.text = profile.bio
+    }
+    
+    private func updateAvatar() {                                   // 8
+        guard
+            let profileImageURL = ProfileImageService.shared.avatarURL,
+            let url = URL(string: profileImageURL)
+        else { return }
+        // TODO [Sprint 11] Обновить аватар, используя Kingfisher
     }
     
 }
